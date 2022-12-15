@@ -4,7 +4,7 @@
 #id2      - complete info
 #name2    - complete info  
 
-
+import random
 
 """A class represnting a node in an AVL tree"""
 
@@ -132,6 +132,18 @@ class AVLTreeList(object):
 		self.max = None
 		# add your fields here
 
+	'''
+	returns whether the node is a left child or right child
+
+		@rtype: bool
+		@returns: True if the node is left child, False otherwise
+	'''
+	def left_child(self, node):
+		if node.parent == None:
+			return None
+		else:
+			return node == node.parent.left
+
 
 	"""returns whether the list is empty
 	@rtype: bool
@@ -149,6 +161,10 @@ class AVLTreeList(object):
 		T = node.left.right
 		node = node.left
 		node.setParent(temp.parent)
+		if temp.parent is not None:
+			temp.parent.setLeft(node) if self.left_child(temp) else temp.parent.setRight(node)
+		else:
+			self.root = node
 		node.setRight(temp)
 		node.right.setLeft(T)
 		T.setParent(node.right)
@@ -171,6 +187,10 @@ class AVLTreeList(object):
 		T = node.right.left
 		node = node.right
 		node.setParent(temp.parent)
+		if temp.parent is not None:
+			temp.parent.setLeft(node) if self.left_child(temp) else temp.parent.setRight(node)
+		else:
+			self.root = node
 		node.setLeft(temp)
 		node.left.setRight(T)
 		T.setParent(node.left)
@@ -201,18 +221,6 @@ class AVLTreeList(object):
 		self.RR(node)
 
 	'''
-	returns whether the node is a left child or right child
-
-		@rtype: bool
-		@returns: True if the node is left child, False otherwise
-	'''
-	def left_child(self, node):
-		if node.parent == None:
-			return None
-		else:
-			return node == node.parent.left
-
-	'''
 	fix the tree after insertion or deletion and count the rotations number
 	@rtype: int
 	@returns: number of rebalancing operations  
@@ -233,10 +241,12 @@ class AVLTreeList(object):
 					self.RR(node)
 				elif node.bf == 2 and node.left.bf == -1: #left-right rotation situation
 					self.LR(node)
+					counter += 1
 				elif node.bf == -2 and (node.right.bf == -1 or node.right.bf == 0): #left rotation situation
 					self.LL(node)
 				elif node.bf == -2 and node.right.bf == 1: #right-left rotation situation
 					self.RL(node)
+					counter += 1
 			node = node.parent
 		return counter
 
@@ -362,7 +372,7 @@ class AVLTreeList(object):
 			return None
 		if self.left_child(n):
 			return n.parent
-		else: #n is right child
+		else:  #n is right child
 			while self.left_child(n.parent) is False: #go up and left as we can
 				n = n.parent
 			if self.left_child(n):
@@ -378,22 +388,24 @@ class AVLTreeList(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, i):
-		if i == self.size-1: #update the max attribute
+		if self.size == 0:
+			return -1
+		if i == self.size-1:  #update the max attribute
 			if AVLNode.isRealNode(self.max.left):
 				self.max = self.predecessor_has_left(self.max)
 			else:
 				self.max = self.predecessor_no_left(self.max)
-		if i == 0: #update the min attribute
+		if i == 0:  #update the min attribute
 			if AVLNode.isRealNode(self.min.right):
 				self.min = self.successor_right_child(self.min)
 			else:
 				self.min = self.successor_no_right(self.min)
-		cur = self.retrieve(i) # the required node to delete
-		if cur.height == 0: #cur is a leaf
+		cur = self.select(i+1)  # the required node to delete
+		if cur.height == 0:  #cur is a leaf
 			temp = cur.parent
 			self.one_child_del(AVLNode(), cur)
-		else: #cur is inner node
-			if not AVLNode.isRealNode(cur.left): #cur has only a right child
+		else:  #cur is inner node
+			if not AVLNode.isRealNode(cur.left):  #cur has only a right child
 				temp = cur.right
 				temp.setParent(cur.parent)
 				self.one_child_del(temp, cur)
@@ -401,8 +413,8 @@ class AVLTreeList(object):
 				temp = cur.left
 				temp.setParent(cur.parent)
 				self.one_child_del(temp, cur)
-			else: #cur has two real childs
-				direct_son = False #if successor is a direct son of cur
+			else:  #cur has two real childs
+				direct_son = False  #if successor is a direct son of cur
 				if cur.right.height == 0:
 					direct_son = True
 				successor = self.successor_right_child(cur)
@@ -432,7 +444,7 @@ class AVLTreeList(object):
 	@returns: the value of the first item, None if the list is empty
 	"""
 	def first(self):
-		return self.min
+		return self.min.value
 
 	"""returns the value of the last item in the list
 
@@ -440,15 +452,26 @@ class AVLTreeList(object):
 	@returns: the value of the last item, None if the list is empty
 	"""
 	def last(self):
-		return self.max
+		return self.max.value
+
+	''' recursive function for listToArray, in-order scan
+	@rtype: void
+	'''
+	def recListToArray(self, node, lst):
+		if not AVLNode.isRealNode(node):
+			return
+		self.recListToArray(node.left, lst)
+		lst.append(node.value)
+		self.recListToArray(node.right, lst)
 
 	"""returns an array representing list 
-
 	@rtype: list
 	@returns: a list of strings representing the data structure
 	"""
 	def listToArray(self):
-		return None
+		lst = []
+		self.recListToArray(self.root, lst)
+		return lst
 
 	"""returns the size of the list 
 
@@ -464,7 +487,13 @@ class AVLTreeList(object):
 	@returns: an AVLTreeList where the values are sorted by the info of the original list.
 	"""
 	def sort(self):
-		return None
+		lst = self.listToArray()
+		if self.size > 1:
+			lst.sort()
+		tree = AVLTreeList()
+		for i in range(len(lst)):
+			tree.insert(i, lst[i])
+		return tree
 
 	"""permute the info values of the list 
 
@@ -472,7 +501,12 @@ class AVLTreeList(object):
 	@returns: an AVLTreeList where the values are permuted randomly by the info of the original list. ##Use Randomness
 	"""
 	def permutation(self):
-		return None
+		lst = self.listToArray()
+		random.shuffle(lst)
+		tree = AVLTreeList()
+		for i in range(len(lst)):
+			tree.insert(i, lst[i])
+		return tree
 
 	"""concatenates lst to self
 
@@ -482,7 +516,25 @@ class AVLTreeList(object):
 	@returns: the absolute value of the difference between the height of the AVL trees joined
 	"""
 	def concat(self, lst):
-		return None
+		h1 = self.root.height
+		h2 = lst.root.height
+		if h1 <= h2:
+			x = lst.min
+			lst.delete(0)  #delete the minimum from the higher tree
+			node = lst.root
+			# find the lst node that has the same height has self
+			while node.height > h1 and node.left.isRealNode():
+				node = node.left
+			x.setRight(node)
+			x.setLeft(self.root)
+			self.root.setParent(x)
+			x.setParent(node.parent)
+			node.parent.setLeft(x)
+			node.setParent(x)
+			self.fix_the_tree(x)  #we need to check if there is another options for rotations
+			self.max = lst.max
+			self.root = lst.root
+		#  write the other option
 
 	"""searches for a *value* in the list
 
@@ -502,6 +554,6 @@ class AVLTreeList(object):
 	@returns: the root, None if the list is empty
 	"""
 	def getRoot(self):
-		return self.root
+		return None if self.size == 0 else self.root
 
 
