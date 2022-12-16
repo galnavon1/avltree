@@ -132,6 +132,7 @@ class AVLTreeList(object):
 		self.max = None
 		# add your fields here
 
+
 	'''
 	returns whether the node is a left child or right child
 
@@ -230,7 +231,7 @@ class AVLTreeList(object):
 		counter = 0 #counter for rebalancing
 		if node == None:
 			return 0
-		while node != None:
+		while node is not None:
 			node.height = max(node.left.height, node.right.height)+1
 			node.bf = node.left.height - node.right.height
 			if node.bf < abs(2):
@@ -278,7 +279,9 @@ class AVLTreeList(object):
 	@returns: the value of the i'th item in the list
 	"""
 	def retrieve(self, i):
-		n = self.select(self, i+1)
+		if i >= self.size or i < 0:
+			return None
+		n = self.select(i+1)
 		return n.value
 
 	'''
@@ -287,7 +290,7 @@ class AVLTreeList(object):
 	'''
 	def predecessor_has_left(self, n):
 		predecessor = n.left
-		while not AVLNode.isRealNode(predecessor.right):
+		while AVLNode.isRealNode(predecessor.right):
 			predecessor = predecessor.right
 		return predecessor
 	'''
@@ -323,6 +326,7 @@ class AVLTreeList(object):
 				self.root = n
 				self.max = n
 				self.min = n
+				self.size += 1
 				return 0
 			else:
 				self.max.setRight(n)
@@ -356,6 +360,10 @@ class AVLTreeList(object):
 			par.parent.left = child
 		else:  # cur is the right child
 			par.parent.right = child
+
+	def append(self, val):
+		self.insert(self.length(), val)
+
 
 	'''
 	@pre: n.right != None
@@ -529,12 +537,48 @@ class AVLTreeList(object):
 			x.setLeft(self.root)
 			self.root.setParent(x)
 			x.setParent(node.parent)
-			node.parent.setLeft(x)
+			if node.parent is not None:
+				node.parent.setLeft(x)
 			node.setParent(x)
-			self.fix_the_tree(x)  #we need to check if there is another options for rotations
-			self.max = lst.max
 			self.root = lst.root
-		#  write the other option
+		else:
+			x = self.max
+			self.delete(self.size-1)
+			node = self.root
+			while node.height > h2 and node.right.isRealNode():
+				node = node.right
+			x.setRight(lst.root)
+			x.setLeft(node)
+			lst.root.setParent(x)
+			x.setParent(node.parent)
+			if node.parent is not None:
+				node.parent.setRight(x)
+			node.setParent(x)
+		self.fix_the_tree(x)
+		self.max = lst.max
+		return max(h2, h1) - min(h2, h1)
+
+	'''
+	returns the rank of a given node
+	@rtype: int
+	'''
+	def myrank(self, node):
+		counter = node.left.size + 1
+		while node.parent is not None:
+			if not AVLTreeList.left_child(node):
+				counter += node.parent.left.size + 1
+		return counter
+
+	'''
+	returns the size of the tree minus the rank of the wanted node or -1 if we cant find the wanted node
+	@rtype: int
+	'''
+	def search_rec(self, node, val):
+		if node.val == val:
+			return self.size - self.myrank(node)
+		elif not node.left.isRealNode and not node.right.isRealNode:
+			return -1
+		return max(self.search_rec(node.left), self.search_rec(node.right))
 
 	"""searches for a *value* in the list
 
@@ -544,7 +588,12 @@ class AVLTreeList(object):
 	@returns: the first index that contains val, -1 if not found.
 	"""
 	def search(self, val):
-		return None
+		#the size of the tree-the wanted node rank or -1
+		res = self.search_rec(self.root, val)
+		if res == -1:
+			return -1
+		else:
+			return self.size-res-1 #treesize-res=rank -> rank-1 = index
 
 
 
@@ -555,5 +604,8 @@ class AVLTreeList(object):
 	"""
 	def getRoot(self):
 		return None if self.size == 0 else self.root
+
+	def getTreeHeight(self):
+		return self.root.height
 
 
