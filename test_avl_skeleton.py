@@ -186,13 +186,8 @@ class testAVLList(unittest.TestCase):
                 self.compare_with_list_by_in_order(T5, L5)
                 self.check_first(T5, L5)
                 self.check_last(T5, L5)
-    '''
-    ### TESTING DELETION ### (assuming insertion works perfectly)#
-    def test_deleting_not_existing(self):
-        self.assertEqual(self.emptyList.delete(0), -1)
-        self.assertEqual(self.twentyTree.delete(-1), -1)
-        self.assertEqual(self.twentyTree.delete(30), -1)
 
+    ### TESTING DELETION ### (assuming insertion works perfectly)#
     def test_delete_list_with_only_one_element(self):
         T = AVLTreeList()
         T.insert(0, 1)
@@ -371,11 +366,19 @@ class testAVLList(unittest.TestCase):
         T = AVLTreeList()
         for i in range(10):
             T.append(i)
-
+        T.printt()
         for i in range(100):
             if cnt % 2 == 0:
+                T.printt()
+                print(T.listToArray())
+                print(len(T.listToArray()))
+                print((T.size, cnt % T.length()))
                 T.insert(cnt % T.length(), i+10)
             else:
+                T.printt()
+                print(T.listToArray())
+                print(len(T.listToArray()))
+                print((T.size, cnt % T.length()))
                 T.delete(cnt % T.length())
             cnt += 17
 
@@ -786,8 +789,8 @@ class testAVLList(unittest.TestCase):
     ### TESTING BALACNE FACTOR ###
 
     def check_BF(self, node, tree):
-        self.assertTrue(abs(node.getLeft().getHeight() -
-                            node.getRight().getHeight()) < 2)
+        bf = node.getLeft().getHeight() - node.getRight().getHeight()
+        self.assertTrue(bf < 2 or bf > -2)
 
     def test_BF_after_insertion_at_start(self):
         T2 = AVLTreeList()
@@ -1262,9 +1265,11 @@ class testAVLList(unittest.TestCase):
     def test_num_of_balnce_ops(self):
         T = AVLTreeList()
         self.assertEqual(T.append(3), 0)
-        self.assertEqual(T.insert(0, 1), 1)
-        self.assertEqual(T.insert(1, 2), 3)
-
+        T.printt()
+        self.assertEqual(T.insert(0, 1), 0)
+        T.printt()
+        self.assertEqual(T.insert(1, 2), 2)
+        T.printt()
     # def test_successor_and_predeccessor(self):
     #     T = AVLTreeList()
     #     T.append(0)
@@ -1275,7 +1280,7 @@ class testAVLList(unittest.TestCase):
     #         T.getRoot().getRight()), None)
     #     self.assertEqual(T.getPredecessorOf(
     #         T.getRoot().getRight()).getValue(), 0)
-'''
+
 
 if __name__ == '__main__':
     unittest.main()
