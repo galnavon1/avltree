@@ -513,6 +513,56 @@ class AVLTreeList(object):
 	def length(self):
 		return self.size
 
+	"""
+	Merges two subarrays of arr[] -
+	First subarray is arr[l..m]
+	Second subarray is arr[m+1..r]
+	"""
+
+	def merge(self, arr, l, m, r):
+		n1 = m - l + 1
+		n2 = r - m
+		# create temporary arrays
+		L = [0] * (n1)
+		R = [0] * (n2)
+		# Copy data to temporary arrays L[] and R[]
+		for i in range(0, n1):
+			L[i] = arr[l + i]
+		for j in range(0, n2):
+			R[j] = arr[m + 1 + j]
+		# Merge the temp arrays back into arr[l..r]
+		i = 0  # Initial index of first subarray
+		j = 0  # Initial index of second subarray
+		k = l  # Initial index of merged subarray
+		while i < n1 and j < n2:
+			if L[i] <= R[j]:
+				arr[k] = L[i]
+				i += 1
+			else:
+				arr[k] = R[j]
+				j += 1
+			k += 1
+		# Copy the remaining elements of L[], if there are any
+		while i < n1:
+			arr[k] = L[i]
+			i += 1
+			k += 1
+		# Copy the remaining elements of R[], if there are any
+		while j < n2:
+			arr[k] = R[j]
+			j += 1
+			k += 1
+	# l is for left index and r is right index of the subarray of arr to be sorted
+
+	def mergeSort(self, arr, l, r):
+		if l < r:
+			# Same as (l+r)//2, but avoids overflow for large l and h
+			m = l + (r - l) // 2
+			# Sort first and second halves
+			self.mergeSort(arr, l, m)
+			self.mergeSort(arr, m + 1, r)
+			self.merge(arr, l, m, r)
+
 	"""sort the info values of the list
 	@rtype: list
 	@returns: an AVLTreeList where the values are sorted by the info of the original list.
@@ -520,10 +570,11 @@ class AVLTreeList(object):
 
 	def sort(self):
 		lst = self.listToArray()
+		n = len(lst)
 		if self.size > 1:
-			lst.sort()
+			self.mergeSort(lst, 0, n-1)
 		tree = AVLTreeList()
-		for i in range(len(lst)):
+		for i in range(n):
 			tree.insert(i, lst[i])
 		return tree
 
@@ -534,7 +585,12 @@ class AVLTreeList(object):
 
 	def permutation(self):
 		lst = self.listToArray()
-		random.shuffle(lst)
+		# shuffle the list
+		for i in range(len(lst)-1, 0, -1):
+			# Pick a random index from 0 to i
+			j = random.randint(0, i + 1)
+			# Swap arr[i] with the element at random index
+			lst[i], lst[j] = lst[j], lst[i]
 		tree = AVLTreeList()
 		for i in range(len(lst)):
 			tree.insert(i, lst[i])
