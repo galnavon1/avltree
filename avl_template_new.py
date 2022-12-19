@@ -588,7 +588,7 @@ class AVLTreeList(object):
 		# shuffle the list
 		for i in range(len(lst)-1, 0, -1):
 			# Pick a random index from 0 to i
-			j = random.randint(0, i + 1)
+			j = random.randint(0, i)
 			# Swap arr[i] with the element at random index
 			lst[i], lst[j] = lst[j], lst[i]
 		tree = AVLTreeList()
@@ -745,71 +745,3 @@ class AVLTreeList(object):
 			i += 1
 
 		return i
-
-'''
-	def leftspace(self, row):
-		"""helper for conc"""
-		# row is the first row of a left node
-		# returns the index of where the second whitespace starts
-		i = len(row) - 1
-		while row[i] == " ":
-			i -= 1
-		return i + 1
-
-	def rightspace(self, row):
-		"""helper for conc"""
-		# row is the first row of a right node
-		# returns the index of where the first whitespace ends
-		i = 0
-		while row[i] == " ":
-			i += 1
-		return i
-
-	def conc(self, left, root, right):
-		"""Return a concatenation of textual represantations of
-		a root node, its left node, and its right node
-		root is a string, and left and right are lists of strings"""
-
-		lwid = len(left[-1])
-		rwid = len(right[-1])
-		rootwid = len(root)
-
-		result = [(lwid + 1) * " " + root + (rwid + 1) * " "]
-
-		ls = self.leftspace(left[0])
-		rs = self.rightspace(right[0])
-		result.append(ls * " " + (lwid - ls) * "_" + "/" + rootwid * " " + "\\" + rs * "_" + (rwid - rs) * " ")
-
-		for i in range(max(len(left), len(right))):
-			row = ""
-			if i < len(left):
-				row += left[i]
-			else:
-				row += lwid * " "
-
-			row += (rootwid + 2) * " "
-
-			if i < len(right):
-				row += right[i]
-			else:
-				row += rwid * " "
-
-			result.append(row)
-
-		return result
-
-	def printree(self, t):
-		"""Print a textual representation of t"""
-		for row in self.trepr(t):
-			print(row)
-		return self.trepr(t)
-
-	def trepr(self, t):
-		"""Return a list of textual representations of the levels in t"""
-		if t is None:
-			return ["#"]
-
-		thistr = str(t.value)
-
-		return self.conc(self.trepr(t.left), thistr, self.trepr(t.right))
-'''
