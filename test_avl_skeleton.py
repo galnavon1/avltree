@@ -90,13 +90,21 @@ class testAVLList(unittest.TestCase):
     def test_insert_at_start(self):
         # inserts at start
         T2 = AVLTreeList()
+        T1 = AVLTreeList()
         L2 = []
 
-        for i in range(50):
+        for i in range(10):
             T2.insert(0, i)
+            T1.insert(0, i)
             L2.insert(0, i)
-            self.compare_with_list_by_in_order(T2, L2)
-            self.compare_with_list_by_retrieve(T2, L2)
+        T2.printt()
+        print("hi")
+        for i in range(10):
+            T1 = T2.permutation()
+            T1.printt()
+            T1 = T1.sort()
+            T1.printt()
+
 
         self.check_first(T2, L2)
         self.check_last(T2, L2)

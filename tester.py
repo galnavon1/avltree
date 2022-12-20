@@ -2,54 +2,59 @@ from avl_template_new import AVLTreeList
 import random
 import math
 
-    def tester():
+def check():
+    for j in range(1, 11):
+        t1 = AVLTreeList()
+        t3 = AVLTreeList()
+        counter1 = 0
+        counter2 = 0
+        counter3 = 0
+        n=1500*(2**j)
+        for i in range(n):
+            counter1 += t1.insert(random.randint(0, i), i)
+            if i < n//2:
+                counter3 += t3.insert(random.randint(0, i), i)
+            else:
+                if i % 2 == 0:
+                    counter3 += t3.delete(random.randint(0, t3.size-1))
+                else:
+                    counter3 += t3.insert(random.randint(0, t3.size), i)
+        for i in range(n):
+            counter2 += t1.delete(random.randint(0, t1.size-1))
+        print(j)
+        print(counter1)
+        print(counter2)
+        print(counter3)
 
-        for i in range(1):
-            avl1 = AVLTreeList()
-            p = random.randint(0,10)
-            for i in range(0,p):
-                avl1.insert(i, i)
+check()
 
-            for i in range(0,math.floor(p/2)):
-                d = random.randint(0, avl1.getRoot().length() -1)
 
-                pp= avl1.delete(d)
-                if(pp==-1):
-                    print("l")
-            if (p - math.floor(p/2)) != len(avl1.listToArray()):
-                print("no")
+def check1():
+    for j in range(5, 11):
+        t1 = AVLTreeList()
+        t2 = AVLTreeList()
+        t3 = AVLTreeList()
+        counter1 = 0
+        counter2 = 0
+        counter3 = 0
+        n = 10*(2**j)
+        for i in range(n):
+            counter1 += t1.insert(random.randint(0, i), i)
+            t2.insert(random.randint(0, i), i)
+            counter2 += t2.insert(random.randint(0, i), i)
+            if i < n//2:
+                counter3 += t3.insert(random.randint(0, i), i)
+            else:
+                if i % 2 == 0:
+                    c = random.randint(0, t3.size-1)
+                    print(t3.retrieve(c))
+                    print(t3.select(c+1).bf)
+                    print(t3.select(c + 1).right.bf)
+                    print(t3.select(c + 1).left.bf)
+                    t3.printt()
+                    counter3 += t3.delete(c)
+                else:
+                    counter3 += t3.insert(random.randint(0, t3.size), i)
 
-            avl2 = AVLTreeList()
-            p = random.randint(0,10)
-            for i in range(0,p):
-                avl2.insert(i, i+10)
-
-            for i in range(0,math.floor(p/2)):
-                d = random.randint(0, avl2.getRoot().length() -1)
-                if(avl2.delete(d)==-1):
-                    print("l")
-
-            for row in trepr(avl1.getRoot()):
-                print(row)
-            for row in trepr(avl2.getRoot()):
-                print(row)
-            l1 = avl1.listToArray()
-            l2 = avl2.listToArray()
-            if (avl1.isAvlTree() == False):
-                print("l")
-            avl1.concat(avl2)
-            for row in trepr(avl1.getRoot()):
-                print(row)
-
-            if (avl1.isAvlTree() == False):
-                print("l")
-            if avl1.listToArray()[0] != avl1.first():
-                print(list)
-            if avl1.listToArray().pop() != avl1.last():
-                print("l")
-            if avl1.listToArray() != (l1+ l2):
-                print(l1)
-                print(l2)
-                print(avl1.listToArray())
 
 
