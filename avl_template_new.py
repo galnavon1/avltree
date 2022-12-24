@@ -634,7 +634,7 @@ class AVLTreeList(object):
 	'''
 	def simple_insert(self, lst, parent, l, r, side=0):
 		cur_index = (r+l)//2
-		n = AVLNode(lst[cur_index], AVLNode(), AVLNode(), parent, 0, r-l)
+		n = AVLNode(lst[cur_index], AVLNode(), AVLNode(), parent, 0, r-l+1)
 		if cur_index == 0:
 			self.min = n
 		if cur_index == len(lst)-1:
@@ -650,7 +650,6 @@ class AVLTreeList(object):
 				self.simple_insert(lst, n, l, cur_index-1, 1)
 			if cur_index < r:
 				self.simple_insert(lst, n, cur_index+1, r, 2)
-
 
 	'''
 	recursive update height and bf attributes for all the tree nodes after simple_insert.
@@ -683,7 +682,8 @@ class AVLTreeList(object):
 			lst[i], lst[j] = lst[j], lst[i]
 		tree = AVLTreeList()
 		tree.simple_insert(lst, None, 0, len(lst)-1)
-		tree.update_attributes()
+		tree.update_attributes(tree.root)
+		tree.size = len(lst)
 		return tree
 
 	"""concatenates lst to self
