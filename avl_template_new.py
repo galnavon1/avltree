@@ -696,13 +696,13 @@ class AVLTreeList(object):
 
 	def concat(self, lst):
 		if lst.size == 0:
-			return self.root.height + 1
+			return self.root.height
 		if self.size == 0:
 			self.root = lst.root
 			self.size = lst.size
 			self.min = lst.min
 			self.max = lst.max
-			return self.root.height + 1
+			return self.root.height
 		h1 = self.root.height
 		h2 = lst.root.height
 		if h1 <= h2:
