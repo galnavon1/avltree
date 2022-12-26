@@ -674,6 +674,8 @@ class AVLTreeList(object):
 
 	def permutation(self):
 		lst = self.listToArray()
+		if len(lst)==0:
+			return AVLTreeList();
 		# shuffle the list
 		for i in range(len(lst)-1, 0, -1):
 			# Pick a random index from 0 to i
