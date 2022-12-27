@@ -624,7 +624,7 @@ class AVLTreeList(object):
 			if lsto[i] is not None:
 				lst.append(lsto[i])
 		n = len(lst)
-		if self.size > 1:
+		if n > 1:
 			self.mergeSort(lst, 0, n-1)
 		tree = AVLTreeList()
 		for i in range(n):
