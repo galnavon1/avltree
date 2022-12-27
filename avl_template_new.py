@@ -618,15 +618,22 @@ class AVLTreeList(object):
 	"""
 
 	def sort(self):
-		lst = self.listToArray()
+		lsto = self.listToArray()
+		lst = []
+		for i in range(len(lsto)):
+			if lsto[i] is not None:
+				lst.append(lsto[i])
 		n = len(lst)
 		if self.size > 1:
 			self.mergeSort(lst, 0, n-1)
 		tree = AVLTreeList()
 		for i in range(n):
 			tree.insert(i, lst[i])
+		if len(lst) != len(lsto):
+			for i in range(len(lsto)-len(lst)):
+				tree.insert(0, None)
 		return tree
-
+	
 	'''
 	recursive insert lst's values into an empty AVLtree in order to build almost balanced 
 	tree. the tree doesnt need rebalance at all. complexity O(n)
@@ -778,62 +785,4 @@ class AVLTreeList(object):
 	def getTreeHeight(self):
 		return self.root.height
 
-	"""
-	functions that print the tree
-	"""
-	def printt(self):
-		out = ""
-		for row in self.printree(self.root):  # need printree.py file
-			out = out + row + "\n"
-		print(out)
 
-	def printree(self, t, bykey=True):
-		# for row in trepr(t, bykey):
-		#        print(row)
-		return self.trepr(t, False)
-
-	def trepr(self, t, bykey=False):
-		if t == None:
-			return ["#"]
-		thistr = str(t.key) if bykey else str(t.getValue())
-		return self.conc(self.trepr(t.left, bykey), thistr, self.trepr(t.right, bykey))
-
-	def conc(self, left, root, right):
-		lwid = len(left[-1])
-		rwid = len(right[-1])
-		rootwid = len(root)
-		result = [(lwid + 1) * " " + root + (rwid + 1) * " "]
-		ls = self.leftspace(left[0])
-		rs = self.rightspace(right[0])
-		result.append(ls * " " + (lwid - ls) * "_" + "/" + rootwid *
-					  " " + "\\" + rs * "_" + (rwid - rs) * " ")
-		for i in range(max(len(left), len(right))):
-			row = ""
-			if i < len(left):
-				row += left[i]
-			else:
-				row += lwid * " "
-			row += (rootwid + 2) * " "
-			if i < len(right):
-				row += right[i]
-			else:
-				row += rwid * " "
-			result.append(row)
-		return result
-
-	def leftspace(self, row):
-		# row is the first row of a left node
-		# returns the index of where the second whitespace starts
-		i = len(row) - 1
-		while row[i] == " ":
-			i -= 1
-		return i + 1
-
-	def rightspace(self, row):
-		# row is the first row of a right node
-		# returns the index of where the first whitespace ends
-		i = 0
-		while row[i] == " ":
-			i += 1
-
-		return i
